@@ -69,8 +69,7 @@ public class Oauth2Controller {
                 "access_token", tokens[0],
                 "token_type", "Bearer",
                 "expires_in", 3600,
-                "refresh_token", tokens[1],
-                "id_token", tokens[2],
+                "id_token", tokens[1],
                 "scope", "read write"));
     }
 

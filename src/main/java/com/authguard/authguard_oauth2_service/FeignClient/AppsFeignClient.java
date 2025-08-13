@@ -12,10 +12,10 @@ import com.authguard.authguard_oauth2_service.dtos.AppResponse;
 
 import feign.Headers;
 
-@FeignClient(name = "authguard-app-service", fallback = AppsFeignFallBack.class)
+@FeignClient(name = "authguard-app-service", fallback = AppsFeignFallBack.class, path = "/service/apps")
 public interface AppsFeignClient {
 
-    @GetMapping("/service/apps/app/{client_id}")
+    @GetMapping("/app/{client_id}")
     AppResponse getApp(@PathVariable("client_id") UUID client_id);
 
 }
