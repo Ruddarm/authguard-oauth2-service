@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import com.authguard.authguard_oauth2_service.model.User;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
@@ -29,6 +31,8 @@ public class JwtService {
     private String privateKey;
     @Value("${jwt.publicKey}")
     private String publicKey;
+    @Value("${spring.application.name}")
+    private String serviceId;
 
     // public JwtService() {
     // try {
@@ -111,14 +115,30 @@ public class JwtService {
      * @param Hashmap<String,Object> a map of all calims
      * 
      * @param String subject
+     * 
      * @return access token sing with private key
      */
-    public String serviceAccessToken(String subject, Map<String, Object> claimsMap)
+    public String serviceAccessToken(Map<String, Object> claimsMap)
             throws InvalidKeyException, Exception {
         long now = System.currentTimeMillis();
-        return Jwts.builder().issuer("auth-guard-service").subject(subject).claims(claimsMap).issuedAt(new Date(now))
-                .expiration(new Date())
+        return Jwts.builder().issuer("authguard-service")
+                .subject(serviceId)
+                .claims(claimsMap)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + 5 * 60 * 1000))
                 .signWith(getPrivateKey(), Jwts.SIG.RS256).compact();
+    }
+
+    /*
+     * Verify service access token inter microservice communication
+     * 
+     * @param String token singed with private key
+     * 
+     * @return Claims all claims.
+     */
+    public Claims verifyServiceToken(String token) throws JwtException, IllegalArgumentException, Exception {
+        Claims claims = Jwts.parser().verifyWith(getPublicKey()).build().parseSignedClaims(token).getPayload();
+        return claims;
     }
 
 }
