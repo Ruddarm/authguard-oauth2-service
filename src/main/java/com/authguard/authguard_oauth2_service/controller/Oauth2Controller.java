@@ -16,7 +16,9 @@ import com.authguard.authguard_oauth2_service.services.OAuth2Service;
 
 import io.jsonwebtoken.security.InvalidKeyException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/oauth2")
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class Oauth2Controller {
 
     @PostMapping("/token")
     public ResponseEntity<?> exchangeTokenCode(@RequestParam Map<String, String> params,
-            @RequestHeader HttpHeaders headers) throws InvalidKeyException, Exception{
+            @RequestHeader HttpHeaders headers) throws InvalidKeyException, Exception {
 
         String grantType = params.get("grant_type");
         String code = params.get("code");
@@ -48,12 +50,14 @@ public class Oauth2Controller {
         }
         String client_id = clientCredentials[0];
         String clientSecret = clientCredentials[1];
+        log.info("Client id {}", client_id);
         // UUID client_id;
         // try {
-        //     client_id = UUID.fromString(clientId);
+        // client_id = UUID.fromString(clientId);
         // } catch (IllegalArgumentException e) {
-        //     System.out.println("Invalid client Id");
-        //     return ResponseEntity.badRequest().body(Map.of("error", "invalid_client_id_format"));
+        // System.out.println("Invalid client Id");
+        // return ResponseEntity.badRequest().body(Map.of("error",
+        // "invalid_client_id_format"));
         // }
         if (!"authorization_code".equals(grantType)) {
             System.out.println("Invalid grant type");
@@ -73,7 +77,7 @@ public class Oauth2Controller {
     @GetMapping("/authorize")
     public RedirectView loginRedirec(@RequestParam String client_id, @RequestParam String redirect_uri,
             @RequestParam String state, @RequestParam String nonce) {
-        //TODO  validate url origin
+        // TODO validate url origin
         String loginUrl = "http://localhost:5173/oauth/user/login" + "?client_id=" + client_id +
                 "&redirectUrl=" + redirect_uri + "&state=" + state + "&nonce=" + nonce;
         return new RedirectView(loginUrl);
