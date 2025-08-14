@@ -34,7 +34,7 @@ public class Oauth2Controller {
     @PostMapping("/token")
     public ResponseEntity<?> exchangeTokenCode(@RequestParam Map<String, String> params,
             @RequestHeader HttpHeaders headers) throws InvalidKeyException, Exception {
-
+        log.info("insid token controoller");
         String grantType = params.get("grant_type");
         String code = params.get("code");
         String redirectUri = params.get("redirect_uri");

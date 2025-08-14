@@ -24,6 +24,7 @@ import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 
 @Service
+
 public class JwtService {
 
     public static final String SecretJwtKey = "ddgdbydjsmsjjsmhdgdndjsksjbdddjdkddk";
@@ -45,13 +46,15 @@ public class JwtService {
     // throw new RuntimeException("Error generating RSA key pair", e);
     // }
     // }
+    
+
     private RSAPrivateKey getPrivateKey() throws Exception {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         byte[] decoded = Base64.getDecoder().decode(privateKey);
         return (RSAPrivateKey) kf.generatePrivate(new PKCS8EncodedKeySpec(decoded));
     }
 
-    private RSAPublicKey getPublicKey() throws Exception {
+    public RSAPublicKey getPublicKey() throws Exception {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         byte[] decoded = Base64.getDecoder().decode(publicKey);
         return (RSAPublicKey) kf.generatePublic(new X509EncodedKeySpec(decoded));
@@ -102,7 +105,7 @@ public class JwtService {
                 .issuer("http://localhost:8081")
                 .subject(user.getUserId().toString())
                 .claim("aud", clientId).claim("nonce", nonce)
-                .claim("email", user.getEmail()).claim("name", user.getFirstName() + " " + user.getLastName())
+                .claim("email", user.getUsername()).claim("name", user.getFirstName() + " " + user.getLastName())
                 .issuedAt(new Date(now))
                 .expiration(new Date(now + 1000 * 60 * 5))
                 .signWith(getPrivateKey(), Jwts.SIG.RS256)
